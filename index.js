@@ -7,7 +7,7 @@ app.use(express.urlencoded({extended: false}));
 
 //routers
 //importar router 
-const router = require('./src/routers/index');
+const router = require('./src/routers/index.router');
 app.use(router);
 
 app.listen(3000, () => {
