@@ -1,7 +1,7 @@
 require('express');
 const pool = require('./conection.controller')
 
-class UsersController {
+class ShopsController {
 
     /**
      * 
@@ -9,7 +9,7 @@ class UsersController {
      * @param {import('express').Response} res 
      */
 
-    createUser(req, res) {
+    createShop(req, res) {
         res.status(201).json({
             ok: true,
             message: "",
@@ -22,7 +22,7 @@ class UsersController {
      * @param {import('express').Response} res 
      */
 
-    updateUser(req, res) {
+    updateShop(req, res) {
         res.status(200).json({
             ok: true,
             message: "",
@@ -35,7 +35,7 @@ class UsersController {
      * @param {import('express').Response} res 
      */
 
-    getUser(req, res) {
+    getShop(req, res) {
         res.status(200).json({
             ok: true,
             message: "",
@@ -48,7 +48,7 @@ class UsersController {
      * @param {import('express').Response} res 
      */
 
-    async getUsers(req, res) {
+    async getShops(req, res) {
         try {
             const response = await pool.query('SELECT * FROM desarrollo.tbproductos');
             res.status(200).json({
@@ -72,7 +72,7 @@ class UsersController {
      * @param {import('express').Response} res 
      */
 
-    deleteUser(req, res) {
+    deleteShop(req, res) {
         res.status(204).json({
             ok: true,
             message: "",
@@ -80,4 +80,4 @@ class UsersController {
         })
     }
 }
-module.exports = UsersController
+module.exports = ShopsController
