@@ -1,5 +1,5 @@
 class Products {
-    constructor({id_product, id_category, id_brand, name, img, price, status=1}) {
+    constructor(id_product, id_category, id_brand, name, img, price, status=1) {
       this.id = id_product;
       this.id_category = id_category;
       this.id_brand = id_brand;
@@ -10,9 +10,7 @@ class Products {
     }
   
     valid() {
-      if (!this.id || this.id?.toString().length == 0) {
-        throw { status: 400, message: "El id es obligatorio" };
-      }
+      
       if (!this.id_category || this.id_category?.toString().length == 0) {
         throw { status: 400, message: "El id_category es obligatorio" };
       }
@@ -38,7 +36,7 @@ class Products {
         id_brand: this.id_brand,
         name: this.name,
         img: this.img,
-        email: this.price,
+        price: this.price,
         status: this.status,
       };
     }
