@@ -3,6 +3,7 @@ const UsersController = require('./user.controller');
 const ShopsController = require('./shops.controller');
 const DealsController = require('./deals.controller');
 const CategoriesController = require('./categories.controller');
+const BrandsController = require('./brands.controller');
 
 
 module.exports = {
@@ -10,5 +11,6 @@ module.exports = {
     UsersController,
     ShopsController,
     DealsController,
-    CategoriesController
+    CategoriesController,
+    BrandsController
 }
