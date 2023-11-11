@@ -6,8 +6,10 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
 //routers
-app.use(require('./src/routers/index'));
+//importar router 
+const router = require('./src/routers/index');
+app.use(router);
 
 app.listen(3000, () => {
     console.log(`Api corriendo: http://localhost:3000`);
-})
+});

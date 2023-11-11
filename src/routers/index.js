@@ -1,9 +1,11 @@
-const { Router } = require('express');
-const router = Router()
+const express = require('express');
+const router = express.Router();
 
-const {getUsers, createUser} = require('../controllers/index.controller')
 
-router.get('/users', getUsers)
-router.post('/users', createUser)
+const userRouter = require('./users.router')
+const productRouter = require('./products.router')
 
-module.exports = router;
+router.use('/products', productRouter)
+router.use('/users', userRouter)
+
+module.exports = router
