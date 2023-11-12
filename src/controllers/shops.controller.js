@@ -110,10 +110,9 @@ class ShopsController {
                 info: response.rows
             });
         } catch (error) {
-            res.status(500).json({
+            res.status(error?.status || 500).json({
                 ok: false,
-                message: "Error al obtener todos las tiendas",
-                info: null
+                message: error?.message || error,
             });
         }
 
