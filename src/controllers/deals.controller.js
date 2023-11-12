@@ -42,7 +42,7 @@ class DealsController {
     async updateDeal(req, res) {
         try {
             const id = req.params.id;
-            const querySelect = "SELECT count(*) FROM desarrollo.tbpromociones WHERE fecha_fin > current_date"
+            const querySelect = "SELECT count(*) FROM desarrollo.tbpromociones WHERE fecha_fin > current_date AND id_promocion = $1"
             const response = await pool.query(querySelect, [id]);
             const count = response.rows[0].count;
             if (count == 0) {

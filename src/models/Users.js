@@ -1,5 +1,5 @@
 class User {
-    constructor({id_user, id_rol, name, img, email, password, status=1}) {
+    constructor(id_user, id_rol, name, img, email, password, status=1) {
       this.id = id_user;
       this.id_rol = id_rol;
       this.name = name;
@@ -10,9 +10,6 @@ class User {
     }
   
     valid() {
-      if (!this.id || this.id?.toString().length == 0) {
-        throw { status: 400, message: "El id es obligatorio" };
-      }
       if (!this.id_rol || this.id_rol?.toString().length == 0) {
         throw { status: 400, message: "El id_rol es obligatorio" };
       }
