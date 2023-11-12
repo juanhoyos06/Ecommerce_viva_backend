@@ -20,7 +20,7 @@ class ProductsController {
             await pool.query(query, [payload?.id_category, payload?.id_brand, payload?.name, payload?.img, payload?.price, payload?.status]);
             res.status(201).json({
                 ok: true,
-                message: "",
+                message: "Producto creado",
                 info: payload
             })
 
@@ -77,14 +77,14 @@ class ProductsController {
             const id = req.params.id;
             const query = "SELECT * FROM desarrollo.tbproductos WHERE estado = '1' AND id_producto = $1";
             const response = await pool.query(query, [id]);
-            console.log(response.rowCount);
+            
 
             if (response.rowCount === 0) {
                 throw { status: 404, message: "El producto no se encontró." };
             }
             res.status(200).json({
                 ok: true,
-                message: "Productos",
+                message: "Informacion del producto",
                 info: response.rows
             });
         } catch (error) {

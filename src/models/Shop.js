@@ -1,5 +1,5 @@
 class Shops {
-    constructor({ id_shop, name, img, webSite, phone, status = 1 }) {
+    constructor(id_shop, name, img, webSite, phone, status = 1) {
         this.id = id_shop;
         this.name = name;
         this.img = img;
@@ -9,10 +9,6 @@ class Shops {
     }
 
     valid() {
-        if (!this.id || this.id?.toString().length == 0) {
-            throw { status: 400, message: "El id es obligatorio" };
-        }
-
         if (!this.name || this.name?.toString().length == 0) {
             throw { status: 400, message: "El name es obligatorio" };
         }
@@ -20,7 +16,7 @@ class Shops {
             throw { status: 400, message: "El email es obligatorio" };
         }
         if (!this.status || this.status?.toString().length == 0) {
-            throw { status: 400, message: "El email es obligatorio" };
+            throw { status: 400, message: "El estado es obligatorio" };
         }
 
     }
