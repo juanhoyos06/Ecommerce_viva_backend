@@ -1,6 +1,10 @@
 require('express');
+const { generateHash } = require("../services/Bcrypt");
+const ConfigService = require("../services/ConfigService");
 const User = require('../models/Users')
 const pool = require('./conection.controller')
+const config = new ConfigService();
+
 
 class UsersController {
 
@@ -25,6 +29,7 @@ class UsersController {
             })
 
         } catch (error) {
+            console.error(error);
             res.status(error?.status || 500).json({
                 ok: false,
                 message: error?.message || error,
@@ -149,5 +154,35 @@ class UsersController {
 
         }
     }
+    /**
+     * 
+     * @param {import('express').Request} req 
+     * @param {import('express').Response} res 
+     */
+    async createImageProfile(req, res) {
+        try {
+            
+            const document = req.files.document;
+            if (document) {
+                document.mv(`./uploads/users/${document.md5}${document.name}`);
+                const host = config.get("api_host");
+                const url = `${host}static/${document.md5}${document.name}`;
+                res.status(200).json({
+                    ok: true,
+                    message: "Imagen del usuario guardado",
+                    info: url,
+                });
+            }
+            throw { status: 400 }
+        } catch (error) {
+            console.error(error);
+            res.status(error?.status || 500).json({
+                ok: false,
+                message: error?.message || error,
+            });
+        }
+    }
+
+
 }
 module.exports = UsersController

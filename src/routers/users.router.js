@@ -10,4 +10,7 @@ router.post('/', _UsersController.createUser);
 router.put('/:id', _UsersController.updateUser);
 router.delete('/:id', _UsersController.deleteUser);
 
+router.post('/:id/image_profile', _UsersController.createImageProfile);
+
+
 module.exports = router;

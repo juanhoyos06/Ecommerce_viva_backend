@@ -1,15 +1,23 @@
 const express = require('express');
+const fileUpload = require('express-fileupload');
+
 const app = express();
 
 //middlewares
 app.use(express.json());
+app.use(fileUpload({
+    tempFileDir: "./tmp"
+}));
 // app.use(express.urlencoded({extended: false}));
 
 //routers
 //importar router 
 const router = require('./src/routers/index.router');
-app.use(router);
+const ConfigService = require("./src/services/ConfigService");
+const config = new ConfigService();
 
-app.listen(3000, () => {
-    console.log(`Api corriendo: http://localhost:3000`);
+app.use(router);
+const PORT = config.get('port')
+app.listen(PORT, () => {
+  console.log(`Api corriendo: http://localhost:${PORT}`);
 });
