@@ -49,6 +49,7 @@ class DealsController {
                 throw { status: 404, message: "La promocion no se encontro." };
             }
             let payload = req.body
+            
             const deal = new Deals(payload?.id, payload?.id_shop, payload?.description, payload?.startDate, payload?.endDate, payload?.img, payload?.percentage, payload?.id_category)
             deal.valid();
             const query = 'UPDATE desarrollo.tbpromociones SET id_tienda = $1, descripcion = $2, fecha_inicio = $3, fecha_fin = $4, imagen = $5, porcentaje = $6, ' +

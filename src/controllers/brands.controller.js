@@ -13,6 +13,7 @@ class BrandsController {
     async createBrand(req, res) {
         try {
             let payload = req.body;
+            payload.name = payload.name.toUpperCase();
             const brand = new Brands(payload?.id, payload?.name, payload?.status)
             brand.valid();
             const query = 'INSERT INTO desarrollo.tbmarcas (nombre, estado)' +
@@ -49,6 +50,7 @@ class BrandsController {
                 throw { status: 404, message: "La marca no se encontró." };
             }
             let payload = req.body
+            payload.name = payload.name.toUpperCase();
             const brand = new Brands(payload?.id, payload?.name, payload?.status)
             brand.valid();
             const query = 'UPDATE desarrollo.tbmarcas SET nombre = $1, estado = $2' +

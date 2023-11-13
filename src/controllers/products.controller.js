@@ -14,6 +14,7 @@ class ProductsController {
         try {
             //TODO: Guardar las imagenes de los productos
             let payload = req.body;
+            payload.name = payload.name.toUpperCase();
             const product = new Product(payload?.id, payload?.id_category, payload?.id_brand, payload?.name, payload?.img, payload?.price, payload?.status)
             product.valid();
             const query = 'INSERT INTO desarrollo.tbproductos (id_categoria, id_marca, nombre, imagen, precio, estado)' +
@@ -49,6 +50,7 @@ class ProductsController {
                 throw { status: 404, message: "El producto no se encontro." };
             }
             let payload = req.body
+            payload.name = payload.name.toUpperCase();
             const product = new Product(payload?.id, payload?.id_category, payload?.id_brand, payload?.name, payload?.img, payload?.price, payload?.status)
             product.valid();
             const query = 'UPDATE desarrollo.tbproductos SET id_categoria = $1, id_marca = $2, nombre = $3, imagen = $4, precio = $5, estado = $6' +

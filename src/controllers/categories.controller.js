@@ -13,6 +13,7 @@ class CategoriesController {
     async createCategory(req, res) {
         try {
             let payload = req.body;
+            payload.name = payload.name.toUpperCase();
             const category = new Categories(payload?.id, payload?.name, payload?.status)
             category.valid();
             const query = 'INSERT INTO desarrollo.tbcategorias (nombre, estado)' +
@@ -49,6 +50,8 @@ class CategoriesController {
                 throw { status: 404, message: "La categoria no se encontró." };
             }
             let payload = req.body
+            payload.name = payload.name.toUpperCase();
+
             const category = new Categories(payload?.id, payload?.name, payload?.status)
             category.valid();
             const query = 'UPDATE desarrollo.tbcategorias SET nombre = $1, estado = $2' +

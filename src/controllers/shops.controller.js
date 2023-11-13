@@ -14,6 +14,7 @@ class ShopsController {
         try {
             //TODO: Guardar las imagenes de las tiendas
             let payload = req.body;
+            payload.name = payload.name.toUpperCase();
             const shop = new Shops(payload?.id, payload?.name, payload?.img, payload?.webSite, payload?.phone, payload?.status)
             shop.valid();
             const query = 'INSERT INTO desarrollo.tbtiendas (nombre, imagen, sitio_web, telefono, estado)' +
@@ -51,6 +52,7 @@ class ShopsController {
                 throw { status: 404, message: "La tienda no se encontró." };
             }
             let payload = req.body
+            payload.name = payload.name.toUpperCase();
             const shop = new Shops(payload?.id, payload?.name, payload?.img, payload?.webSite, payload?.phone, payload?.status)
             shop.valid();
             const query = 'UPDATE desarrollo.tbtiendas SET nombre = $1, imagen = $2, sitio_web = $3, telefono = $4, estado = $5' +

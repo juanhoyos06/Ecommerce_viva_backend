@@ -13,10 +13,10 @@ const { AuthMiddleware } = require('../middleware/auth.middleware');
 const authController = new AuthController()
 
 router.post('/login', authController.login)
+router.use('/users', userRouter)
 router.use(AuthMiddleware)
 
 router.use('/products', productRouter)
-router.use('/users', userRouter)
 router.use('/shops', shopRouter)
 router.use('/deals', dealRouter)
 router.use('/categories', categoryRouter)
