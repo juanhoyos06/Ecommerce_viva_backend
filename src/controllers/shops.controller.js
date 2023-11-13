@@ -12,6 +12,7 @@ class ShopsController {
 
     async createShop(req, res) {
         try {
+            //TODO: Guardar las imagenes de las tiendas
             let payload = req.body;
             const shop = new Shops(payload?.id, payload?.name, payload?.img, payload?.webSite, payload?.phone, payload?.status)
             shop.valid();
@@ -41,6 +42,7 @@ class ShopsController {
 
     async updateShop(req, res) {
         try {
+            
             const id = req.params.id;
             const querySelect = "SELECT count(*) FROM desarrollo.tbtiendas WHERE id_tienda = $1 AND estado = '1'"
             const response = await pool.query(querySelect, [id]);

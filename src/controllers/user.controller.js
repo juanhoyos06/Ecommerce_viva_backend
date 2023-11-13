@@ -16,6 +16,7 @@ class UsersController {
 
     async createUser(req, res) {
         try {
+            //TODO: Guardar las imagenes de los usuarios
             let payload = req.body;
             payload.password = await generateHash(payload.password);
             const querySelect = "SELECT count(*) FROM desarrollo.tbusuarios WHERE correo = $1 AND estado = '1'"

@@ -12,6 +12,7 @@ class ProductsController {
 
     async createProduct(req, res) {
         try {
+            //TODO: Guardar las imagenes de los productos
             let payload = req.body;
             const product = new Product(payload?.id, payload?.id_category, payload?.id_brand, payload?.name, payload?.img, payload?.price, payload?.status)
             product.valid();
