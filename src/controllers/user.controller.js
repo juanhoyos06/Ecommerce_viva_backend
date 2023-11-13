@@ -17,6 +17,12 @@ class UsersController {
     async createUser(req, res) {
         try {
             let payload = req.body;
+            const querySelect = "SELECT count(*) FROM desarrollo.tbusuarios WHERE correo = $1 AND estado = '1'"
+            const response = await pool.query(querySelect, [payload?.email]);
+            const count = response.rows[0].count;
+            if (count > 0) {
+                throw { status: 404, message: "Ya existe un usuario con ese correo" };
+            }
             const user = new User(payload?.id, payload?.id_rol, payload?.name, payload?.img, payload?.email, payload?.password, payload?.status)
             user.valid();
             const query = 'INSERT INTO desarrollo.tbusuarios (id_rol, nombre, imagen, correo, contrasenia, estado)' +
