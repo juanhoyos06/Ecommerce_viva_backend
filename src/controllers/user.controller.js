@@ -17,6 +17,7 @@ class UsersController {
     async createUser(req, res) {
         try {
             let payload = req.body;
+            payload.password = await generateHash(payload.password);
             const querySelect = "SELECT count(*) FROM desarrollo.tbusuarios WHERE correo = $1 AND estado = '1'"
             const response = await pool.query(querySelect, [payload?.email]);
             const count = response.rows[0].count;
@@ -59,6 +60,7 @@ class UsersController {
                 throw { status: 404, message: "El usuario no se encontró." };
             }
             let payload = req.body
+            payload.password = await generateHash(payload.password);
             const user = new User(payload?.id, payload?.id_rol, payload?.name, payload?.img, payload?.email, payload?.password, payload?.status)
             user.valid();
             const query = 'UPDATE desarrollo.tbusuarios SET id_rol = $1, nombre = $2, imagen = $3, correo = $4, contrasenia = $5, estado = $6' +
