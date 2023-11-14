@@ -18,11 +18,11 @@ class AuthController {
     async login(req, res) {
         try {
             const { email, password } = req.body;
-            console.log(email , password);
+            
 
             // VALIDAR email & password
             const result = await pool.query("SELECT * FROM desarrollo.tbusuarios WHERE correo = $1", [email.toUpperCase()]);
-            console.log(result.rows);
+            
             if (result.rows.length === 0) {
                 throw { status: 404, message: "El usuario no se encontró." };
             }

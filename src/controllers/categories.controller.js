@@ -16,6 +16,7 @@ class CategoriesController {
             payload.name = payload.name.toUpperCase();
             const category = new Categories(payload?.id, payload?.name, payload?.status)
             category.valid();
+            payload.status = 1;
             const query = 'INSERT INTO desarrollo.tbcategorias (nombre, estado)' +
                 ' VALUES($1, $2)';
             await pool.query(query, [payload?.name, payload?.status]);
@@ -129,7 +130,7 @@ class CategoriesController {
         try {
             const query = "SELECT * FROM desarrollo.view_info_categorias_para_tiendas";
             const response = await pool.query(query);
-            console.log(response);
+            
             res.status(200).json({
                 ok: true,
                 message: "Informacion de las categorias",

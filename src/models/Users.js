@@ -11,7 +11,7 @@ class User {
   
     valid() {
       if (!this.id_rol || this.id_rol?.toString().length == 0) {
-        console.log(this.id);
+      
         throw { status: 400, message: "El id_rol es obligatorio" };
       }
       if (!this.name || this.name?.toString().length == 0) {

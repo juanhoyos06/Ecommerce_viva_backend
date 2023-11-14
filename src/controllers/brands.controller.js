@@ -16,6 +16,7 @@ class BrandsController {
             payload.name = payload.name.toUpperCase();
             const brand = new Brands(payload?.id, payload?.name, payload?.status)
             brand.valid();
+            payload.status = 1;
             const query = 'INSERT INTO desarrollo.tbmarcas (nombre, estado)' +
                 ' VALUES($1, $2)';
             await pool.query(query, [payload?.name, payload?.status]);
@@ -26,7 +27,6 @@ class BrandsController {
             })
 
         } catch (error) {
-            console.error(error);
             res.status(error?.status || 500).json({
                 ok: false,
                 message: error?.message || error,

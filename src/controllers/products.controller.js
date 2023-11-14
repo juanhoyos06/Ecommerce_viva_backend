@@ -27,7 +27,7 @@ class ProductsController {
 
     async createProduct(req, res) {
         try {
-            //TODO: Guardar las imagenes de los productos
+            // TODO: Guardar las imagenes de los productos
             let payload = req.body;
             payload.name = payload.name.toUpperCase();
             const document = req.files.img;
