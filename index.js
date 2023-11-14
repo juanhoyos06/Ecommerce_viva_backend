@@ -7,9 +7,8 @@ const app = express();
 //middlewares
 app.use(express.json());
 app.use(cors());
-app.use(fileUpload({
-    tempFileDir: "./tmp"
-}));
+app.use(fileUpload());
+app.use('/static', express.static('uploads/products'));
 // app.use(express.urlencoded({extended: false}));
 
 //routers

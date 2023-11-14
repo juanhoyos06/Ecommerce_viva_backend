@@ -1,9 +1,24 @@
 require('express');
+const ConfigService = require("../services/ConfigService");
 const Product = require("../models/Products")
 const pool = require('./conection.controller')
+const config = new ConfigService();
+
 
 class ProductsController {
 
+
+  
+    static async getIdcategory(name){
+        const query = "SELECT id_categoria FROM desarrollo.tbcategorias WHERE nombre = $1";
+        const response = await pool.query(query, [name]);
+        return response.rows[0].id_categoria;
+    }
+    static async getIdBrand(name){
+        const query = "SELECT id_marca FROM desarrollo.tbmarcas WHERE nombre = $1";
+        const response = await pool.query(query, [name]);
+        return response.rows[0].id_marca;
+    }
     /**
      * 
      * @param {import('express').Request} req 
@@ -15,11 +30,24 @@ class ProductsController {
             //TODO: Guardar las imagenes de los productos
             let payload = req.body;
             payload.name = payload.name.toUpperCase();
-            
+            const document = req.files.img;
+            if (document) {
+                document.mv(`./uploads/products/${document.md5}${document.name}`);
+                const host = config.get("api_host");
+                const url = `${host}static/${document.md5}${document.name}`;
+                payload.img = url
+            }else{
+                throw { status: 404, message: "El archivo no se encuentra" };
+            }
+            const response_id_shop = await pool.query('SELECT id_tienda FROM desarrollo.tbadmintiendas WHERE id_usuario = $1', [payload.id_user])
+            const id_shop = response_id_shop.rows[0].id_tienda
+            payload.id_category = await ProductsController.getIdcategory(payload.id_category)
+            payload.id_brand = await ProductsController.getIdBrand(payload.id_brand)
+
             const product = new Product(payload?.id, payload?.id_category, payload?.id_brand, payload?.name, payload?.img, payload?.price)
             product.valid();
             const query = 'CALL desarrollo.agregar_producto($1, $2, $3, $4, $5, $6, $7,$8);'
-            await pool.query(query, [payload?.id_category, payload?.id_brand, payload?.name, payload?.img, payload?.price, payload?.id_shop,payload?.cant,payload?.address]);
+            await pool.query(query, [payload?.id_category, payload?.id_brand, payload?.name, payload?.img, payload?.price, id_shop, payload?.cant, payload?.address]);
             res.status(201).json({
                 ok: true,
                 message: "Producto creado",
@@ -159,11 +187,11 @@ class ProductsController {
     async getProductCategory(req, res) {
         try {
             const id = req.params.id;
-            const query = "SELECT p.id_producto, p.nombre, p.imagen, p.precio, m.nombre marca, c.nombre categoria, i.cantidad FROM desarrollo.tbproductos p "+
-            "JOIN desarrollo.tbmarcas m ON p.id_marca = m.id_marca "+
-            "JOIN desarrollo.tbcategorias c ON p.id_categoria = c.id_categoria "+
-            "JOIN desarrollo.tbinventario i ON i.id_producto = p.id_producto "+
-            "WHERE p.estado = '1' AND p.id_categoria = $1;";
+            const query = "SELECT p.id_producto, p.nombre, p.imagen, p.precio, m.nombre marca, c.nombre categoria, i.cantidad FROM desarrollo.tbproductos p " +
+                "JOIN desarrollo.tbmarcas m ON p.id_marca = m.id_marca " +
+                "JOIN desarrollo.tbcategorias c ON p.id_categoria = c.id_categoria " +
+                "JOIN desarrollo.tbinventario i ON i.id_producto = p.id_producto " +
+                "WHERE p.estado = '1' AND p.id_categoria = $1;";
 
             const response = await pool.query(query, [id]);
 
@@ -191,11 +219,11 @@ class ProductsController {
     async getProductBrand(req, res) {
         try {
             const id = req.params.id;
-            const query = "SELECT p.id_producto, p.nombre, p.imagen, p.precio, m.nombre marca, c.nombre categoria, i.cantidad FROM desarrollo.tbproductos p "+
-            "JOIN desarrollo.tbmarcas m ON p.id_marca = m.id_marca "+
-            "JOIN desarrollo.tbcategorias c ON p.id_categoria = c.id_categoria "+
-            "JOIN desarrollo.tbinventario i ON i.id_producto = p.id_producto "+
-            "WHERE p.estado = '1' AND p.id_marca = $1;";
+            const query = "SELECT p.id_producto, p.nombre, p.imagen, p.precio, m.nombre marca, c.nombre categoria, i.cantidad FROM desarrollo.tbproductos p " +
+                "JOIN desarrollo.tbmarcas m ON p.id_marca = m.id_marca " +
+                "JOIN desarrollo.tbcategorias c ON p.id_categoria = c.id_categoria " +
+                "JOIN desarrollo.tbinventario i ON i.id_producto = p.id_producto " +
+                "WHERE p.estado = '1' AND p.id_marca = $1;";
 
             const response = await pool.query(query, [id]);
 

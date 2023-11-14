@@ -6,6 +6,7 @@ const createToken = (payload) => {
 };
 
 const verifyToken = (token) => {
+  console.log(token);
   try {
     return jwt.verify(token, SECRET);
   } catch (error) {
