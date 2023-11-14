@@ -1,4 +1,6 @@
 require('express');
+const ConfigService = require("../services/ConfigService");
+const config = new ConfigService();
 
 const Deals = require('../models/Deals');
 const pool = require('./conection.controller')
@@ -14,6 +16,15 @@ class DealsController {
     async createDeal(req, res) {
         try {
             let payload = req.body;
+            const document = req.files.img;
+            if (document) {
+                document.mv(`./uploads/deals/${document.md5}${document.name}`);
+                const host = config.get("api_host");
+                const url = `${host}static/${document.md5}${document.name}`;
+                payload.img = url
+            } else {
+                throw { status: 404, message: "El archivo no se encuentra" };
+            }
             const deal = new Deals(payload?.id, payload?.id_shop, payload?.description, payload?.startDate, payload?.endDate, payload?.img, payload?.percentage, payload?.id_category)
             deal.valid();
             const query = 'INSERT INTO desarrollo.tbpromociones (id_tienda, descripcion, fecha_inicio, fecha_fin, imagen, porcentaje, id_categoria)' +
@@ -49,7 +60,7 @@ class DealsController {
                 throw { status: 404, message: "La promocion no se encontro." };
             }
             let payload = req.body
-            
+
             const deal = new Deals(payload?.id, payload?.id_shop, payload?.description, payload?.startDate, payload?.endDate, payload?.img, payload?.percentage, payload?.id_category)
             deal.valid();
             const query = 'UPDATE desarrollo.tbpromociones SET id_tienda = $1, descripcion = $2, fecha_inicio = $3, fecha_fin = $4, imagen = $5, porcentaje = $6, ' +
