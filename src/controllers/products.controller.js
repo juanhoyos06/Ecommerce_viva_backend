@@ -154,6 +154,34 @@ class ProductsController {
      * @param {import('express').Response} res 
      */
 
+    async getInfoProducts(req, res) {
+        try {
+            const id = req.params.id;
+            const query = "SELECT p.id_producto, p.nombre, p.imagen, p.precio, m.nombre marca, c.nombre categoria, i.cantidad, i.ubicacion_bodega FROM desarrollo.tbproductos p "+
+            "JOIN desarrollo.tbmarcas m ON p.id_marca = m.id_marca "+
+            "JOIN desarrollo.tbcategorias c ON p.id_categoria = c.id_categoria "+
+            "JOIN desarrollo.tbinventario i ON i.id_producto = p.id_producto "+
+            "WHERE p.id_producto = $1 ";
+            const response = await pool.query(query,[id]);
+            res.status(200).json({
+                ok: true,
+                message: "Productos",
+                info: response.rows
+            });
+        } catch (error) {
+            res.status(error?.status || 500).json({
+                ok: false,
+                message: error?.message || error,
+            });
+        }
+
+    }
+    /**
+     * 
+     * @param {import('express').Request} req 
+     * @param {import('express').Response} res 
+     */
+
     async deleteProduct(req, res) {
         try {
             const id = req.params.id;
