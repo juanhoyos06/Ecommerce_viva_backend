@@ -15,11 +15,11 @@ class ProductsController {
             //TODO: Guardar las imagenes de los productos
             let payload = req.body;
             payload.name = payload.name.toUpperCase();
-            const product = new Product(payload?.id, payload?.id_category, payload?.id_brand, payload?.name, payload?.img, payload?.price, payload?.status)
+            
+            const product = new Product(payload?.id, payload?.id_category, payload?.id_brand, payload?.name, payload?.img, payload?.price)
             product.valid();
-            const query = 'INSERT INTO desarrollo.tbproductos (id_categoria, id_marca, nombre, imagen, precio, estado)' +
-                ' VALUES($1, $2, $3, $4, $5, $6)';
-            await pool.query(query, [payload?.id_category, payload?.id_brand, payload?.name, payload?.img, payload?.price, payload?.status]);
+            const query = 'CALL desarrollo.agregar_producto($1, $2, $3, $4, $5, $6, $7,$8);'
+            await pool.query(query, [payload?.id_category, payload?.id_brand, payload?.name, payload?.img, payload?.price, payload?.id_shop,payload?.cant,payload?.address]);
             res.status(201).json({
                 ok: true,
                 message: "Producto creado",
@@ -80,7 +80,7 @@ class ProductsController {
             const id = req.params.id;
             const query = "SELECT * FROM desarrollo.tbproductos WHERE estado = '1' AND id_producto = $1";
             const response = await pool.query(query, [id]);
-            
+
 
             if (response.rowCount === 0) {
                 throw { status: 404, message: "El producto no se encontró." };
@@ -105,7 +105,7 @@ class ProductsController {
 
     async getProducts(req, res) {
         try {
-            const query = "SELECT * FROM desarrollo.tbproductos WHERE estado = '1'";
+            const query = "SELECT * FROM desarrollo.view_info_productos";
             const response = await pool.query(query);
             res.status(200).json({
                 ok: true,
@@ -148,6 +148,71 @@ class ProductsController {
                 message: error?.message || error,
             });
 
+        }
+    }
+    /**
+     * 
+     * @param {import('express').Request} req 
+     * @param {import('express').Response} res 
+     */
+
+    async getProductCategory(req, res) {
+        try {
+            const id = req.params.id;
+            const query = "SELECT p.id_producto, p.nombre, p.imagen, p.precio, m.nombre marca, c.nombre categoria, i.cantidad FROM desarrollo.tbproductos p "+
+            "JOIN desarrollo.tbmarcas m ON p.id_marca = m.id_marca "+
+            "JOIN desarrollo.tbcategorias c ON p.id_categoria = c.id_categoria "+
+            "JOIN desarrollo.tbinventario i ON i.id_producto = p.id_producto "+
+            "WHERE p.estado = '1' AND p.id_categoria = $1;";
+
+            const response = await pool.query(query, [id]);
+
+
+            if (response.rowCount === 0) {
+                throw { status: 404, message: "El producto no se encontró." };
+            }
+            res.status(200).json({
+                ok: true,
+                message: "Informacion del producto",
+                info: response.rows
+            });
+        } catch (error) {
+            res.status(error?.status || 500).json({
+                ok: false,
+                message: error?.message || error,
+            });
+        }
+    }
+    /**
+     * 
+     * @param {import('express').Request} req 
+     * @param {import('express').Response} res 
+     */
+    async getProductBrand(req, res) {
+        try {
+            const id = req.params.id;
+            const query = "SELECT p.id_producto, p.nombre, p.imagen, p.precio, m.nombre marca, c.nombre categoria, i.cantidad FROM desarrollo.tbproductos p "+
+            "JOIN desarrollo.tbmarcas m ON p.id_marca = m.id_marca "+
+            "JOIN desarrollo.tbcategorias c ON p.id_categoria = c.id_categoria "+
+            "JOIN desarrollo.tbinventario i ON i.id_producto = p.id_producto "+
+            "WHERE p.estado = '1' AND p.id_marca = $1;";
+
+            const response = await pool.query(query, [id]);
+
+
+            // if (response.rowCount === 0) {
+            //     throw { status: 404, message: "El producto no se encontró." };
+            // }
+            res.status(200).json({
+                ok: true,
+                message: "Informacion del¿ los productos",
+                info: response.rows
+            });
+        } catch (error) {
+            res.status(error?.status || 500).json({
+                ok: false,
+                message: error?.message || error,
+            });
         }
     }
 }

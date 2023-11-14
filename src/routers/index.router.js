@@ -14,14 +14,14 @@ const authController = new AuthController()
 
 router.post('/login', authController.login)
 router.use('/users', userRouter)
-router.use(AuthMiddleware)
-
-router.use('/products', productRouter)
 router.use('/shops', shopRouter)
+router.use('/products', productRouter)
+
 router.use('/deals', dealRouter)
 router.use('/categories', categoryRouter)
 router.use('/brands', brandRouter)
 router.post('/verify', authController.verifyToken)
+router.use(AuthMiddleware)
 
 router.use((req, res) =>{
     return res.status(404).json({

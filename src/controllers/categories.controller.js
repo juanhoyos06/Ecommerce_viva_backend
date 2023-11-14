@@ -125,6 +125,30 @@ class CategoriesController {
      * @param {import('express').Request} req 
      * @param {import('express').Response} res 
      */
+    async getCategoriesShop(req, res) {
+        try {
+            const query = "SELECT * FROM desarrollo.view_info_categorias_para_tiendas";
+            const response = await pool.query(query);
+            console.log(response);
+            res.status(200).json({
+                ok: true,
+                message: "Informacion de las categorias",
+                info: response.rows
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(error?.status || 500).json({
+                ok: false,
+                message: error?.message || error,
+            });
+        }
+
+    }
+    /**
+     * 
+     * @param {import('express').Request} req 
+     * @param {import('express').Response} res 
+     */
 
     async deleteCategory(req, res) {
         try {

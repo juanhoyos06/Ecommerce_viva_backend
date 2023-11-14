@@ -125,6 +125,29 @@ class BrandsController {
      * @param {import('express').Response} res 
      */
 
+    async getBrandsShops(req, res) {
+        try {
+            const query = "SELECT * FROM desarrollo.view_info_marcas_para_tiendas";
+            const response = await pool.query(query);
+            res.status(200).json({
+                ok: true,
+                message: "Informacion de las marcas",
+                info: response.rows
+            });
+        } catch (error) {
+            res.status(error?.status || 500).json({
+                ok: false,
+                message: error?.message || error,
+            });
+        }
+
+    }
+    /**
+     * 
+     * @param {import('express').Request} req 
+     * @param {import('express').Response} res 
+     */
+
     async deleteBrand(req, res) {
         try {
             const id = req.params.id;

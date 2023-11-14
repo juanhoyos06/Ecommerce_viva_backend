@@ -5,6 +5,7 @@ const { CategoriesController } = require('../controllers/index.controller');
 const _categoryController = new CategoriesController();
 
 router.get('/', _categoryController.getCategories);
+router.get('/shops', _categoryController.getCategoriesShop);
 router.get('/:id', _categoryController.getCategory);
 router.post('/', _categoryController.createCategory);
 router.put('/:id', _categoryController.updateCategory);
