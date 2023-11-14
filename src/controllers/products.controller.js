@@ -70,6 +70,7 @@ class ProductsController {
 
     async updateProduct(req, res) {
         try {
+            
             const id = req.params.id;
             const querySelect = "SELECT count(*) FROM desarrollo.tbproductos WHERE id_producto = $1 AND estado = '1'"
             const response = await pool.query(querySelect, [id]);
@@ -78,12 +79,14 @@ class ProductsController {
                 throw { status: 404, message: "El producto no se encontro." };
             }
             let payload = req.body
+            payload.id_category = await ProductsController.getIdcategory(payload.id_category)
+            payload.id_brand = await ProductsController.getIdBrand(payload.id_brand)
             payload.name = payload.name.toUpperCase();
-            const product = new Product(payload?.id, payload?.id_category, payload?.id_brand, payload?.name, payload?.img, payload?.price, payload?.status)
+            const product = new Product(id, payload?.id_category, payload?.id_brand, payload?.name, payload?.img, payload?.price, payload?.status)
             product.valid();
-            const query = 'UPDATE desarrollo.tbproductos SET id_categoria = $1, id_marca = $2, nombre = $3, imagen = $4, precio = $5, estado = $6' +
-                ' WHERE id_producto = $7';
-            await pool.query(query, [payload?.id_category, payload?.id_brand, payload?.name, payload?.img, payload?.price, payload?.status, id]);
+            const query = "UPDATE desarrollo.tbproductos SET id_categoria = $1, id_marca = $2, nombre = $3, precio = $4, estado = '1'" +
+                " WHERE id_producto = $5 ";
+            await pool.query(query, [payload?.id_category, payload?.id_brand, payload?.name, payload?.price, id]);
             res.status(200).json({
                 ok: true,
                 message: "Producto actualizado",
