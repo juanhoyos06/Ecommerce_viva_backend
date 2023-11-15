@@ -25,11 +25,13 @@ class DealsController {
             } else {
                 throw { status: 404, message: "El archivo no se encuentra" };
             }
-            const deal = new Deals(payload?.id, payload?.id_shop, payload?.description, payload?.startDate, payload?.endDate, payload?.img, payload?.percentage, payload?.id_category)
+            //Este id_user viene desde el front 
+            const response_id_shop = await pool.query('SELECT id_tienda FROM desarrollo.tbadmintiendas WHERE id_usuario = $1', [payload.id_user])
+            const id_shop = response_id_shop.rows[0].id_tienda
+            const deal = new Deals(payload?.id, id_shop, payload?.description, payload?.startDate, payload?.endDate, payload?.img, payload?.percentage, payload?.id_category)
             deal.valid();
-            const query = 'INSERT INTO desarrollo.tbpromociones (id_tienda, descripcion, fecha_inicio, fecha_fin, imagen, porcentaje, id_categoria)' +
-                ' VALUES($1, $2, $3, $4, $5, $6, $7)';
-            await pool.query(query, [payload?.id_shop, payload?.description, payload?.startDate, payload?.endDate, payload?.img, payload?.percentage, payload?.id_category]);
+            const query = 'CALL desarrollo.agregar_promocion($1, $2, $3, $4, $5, $6, $7)';
+            await pool.query(query, [id_shop, payload?.id_category, payload?.description, payload?.startDate, payload?.endDate, payload?.img, payload?.percentage]);
             res.status(201).json({
                 ok: true,
                 message: "Promocion creada",
