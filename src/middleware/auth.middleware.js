@@ -9,6 +9,7 @@ require('express')
  */
 const AuthMiddleware = (req, res, next) => {
     try {
+        console.log(req.headers);
         const {authorization} = req.headers;
         const token = authorization?.split(" ")[1];
         const user = verifyToken(token);

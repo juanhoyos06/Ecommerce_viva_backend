@@ -21,6 +21,7 @@ router.use('/deals', dealRouter)
 router.use('/categories', categoryRouter)
 router.use('/brands', brandRouter)
 router.post('/verify', authController.verifyToken)
+
 router.use(AuthMiddleware)
 
 router.use((req, res) =>{
