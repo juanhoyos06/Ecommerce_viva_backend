@@ -8,16 +8,18 @@ class Deals {
         this.img = img;
         this.percentage = percentage;
         this.id_category = id_category;
+        console.log(end_date);
     }
-
+//payload?.id, id_shop, payload?.description, payload?.startDate, payload?.endDate, payload?.img, payload?.percentage, payload?.id_category
     valid() {
-
         if (!this.id_shop || this.id_shop?.toString().length == 0) {
             throw { status: 400, message: "El id_shop es obligatorio" };
         }
+        
         if (!this.id_category || this.id_category?.toString().length == 0) {
             throw { status: 400, message: "El id_category es obligatorio" };
         }
+
         if (!this.description || this.description?.toString().length == 0) {
             throw { status: 400, message: "El description es obligatorio" };
         }

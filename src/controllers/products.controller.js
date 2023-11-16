@@ -14,6 +14,7 @@ class ProductsController {
         const response = await pool.query(query, [name]);
         return response.rows[0].id_categoria;
     }
+    
     static async getIdBrand(name){
         const query = "SELECT id_marca FROM desarrollo.tbmarcas WHERE nombre = $1";
         const response = await pool.query(query, [name]);

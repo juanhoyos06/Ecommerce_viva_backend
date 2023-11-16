@@ -7,6 +7,11 @@ const pool = require('./conection.controller')
 
 class DealsController {
 
+    static async getIdcategory(name) {
+        const query = "SELECT id_categoria FROM desarrollo.tbcategorias WHERE nombre = $1";
+        const response = await pool.query(query, [name]);
+        return response.rows[0].id_categoria;
+    }
     /**
      * 
      * @param {import('express').Request} req 
@@ -26,10 +31,13 @@ class DealsController {
                 throw { status: 404, message: "El archivo no se encuentra" };
             }
             //Este id_user viene desde el front 
+            payload.id_category = await DealsController.getIdcategory(payload.id_category)
+
             const response_id_shop = await pool.query('SELECT id_tienda FROM desarrollo.tbadmintiendas WHERE id_usuario = $1', [payload.id_user])
             const id_shop = response_id_shop.rows[0].id_tienda
-            const deal = new Deals(payload?.id, id_shop, payload?.description, payload?.startDate, payload?.endDate, payload?.img, payload?.percentage, payload?.id_category)
+            const deal = new Deals(payload?.id, id_shop, payload?.id_category, payload?.description, payload?.startDate, payload?.endDate, payload?.img, payload?.percentage)
             deal.valid();
+            //La fecha viene en el mismo formato
             const query = 'CALL desarrollo.agregar_promocion($1, $2, $3, $4, $5, $6, $7)';
             await pool.query(query, [id_shop, payload?.id_category, payload?.description, payload?.startDate, payload?.endDate, payload?.img, payload?.percentage]);
             res.status(201).json({
@@ -62,12 +70,14 @@ class DealsController {
                 throw { status: 404, message: "La promocion no se encontro." };
             }
             let payload = req.body
-
-            const deal = new Deals(payload?.id, payload?.id_shop, payload?.description, payload?.startDate, payload?.endDate, payload?.img, payload?.percentage, payload?.id_category)
+            const response_id_shop = await pool.query('SELECT id_tienda FROM desarrollo.tbadmintiendas WHERE id_usuario = $1', [payload.id_user])
+            const id_shop = response_id_shop.rows[0].id_tienda
+            payload.id_category = await DealsController.getIdcategory(payload.id_category);
+            const deal = new Deals(payload?.id, id_shop, payload?.id_category, payload?.description, payload?.startDate, payload?.endDate, payload?.img, payload?.percentage,)
             deal.valid();
-            const query = 'UPDATE desarrollo.tbpromociones SET id_tienda = $1, descripcion = $2, fecha_inicio = $3, fecha_fin = $4, imagen = $5, porcentaje = $6, ' +
-                'id_categoria = $7 WHERE id_promocion = $8';
-            await pool.query(query, [payload?.id_shop, payload?.description, payload?.startDate, payload?.endDate, payload?.img, payload?.percentage, payload?.id_category, id]);
+            const query = 'UPDATE desarrollo.tbpromociones SET id_tienda = $1, descripcion = $2, fecha_inicio = $3, fecha_fin = $4, porcentaje = $5, ' +
+                'id_categoria = $6 WHERE id_promocion = $7';
+            await pool.query(query, [id_shop, payload?.description, payload?.startDate, payload?.endDate, payload?.percentage, payload?.id_category, id]);
             res.status(200).json({
                 ok: true,
                 message: "Promocion actualizada",
@@ -132,6 +142,28 @@ class DealsController {
         }
 
     }
+
+    async getInfoDeals(req, res) {
+        try {
+            const id = req.params.id;
+            const query = "SELECT p.descripcion, c.nombre categoria, p.fecha_inicio, p.fecha_fin, p.porcentaje  FROM desarrollo.tbpromociones p "+
+            "JOIN desarrollo.tbcategorias c ON p.id_categoria = c.id_categoria " +
+            "WHERE p.id_promocion = $1;"
+            const response = await pool.query(query, [id]);
+            res.status(200).json({
+                ok: true,
+                message: "Promociones",
+                info: response.rows
+            });
+        } catch (error) {
+            res.status(error?.status || 500).json({
+                ok: false,
+                message: error?.message || error,
+            });
+        }
+
+    }
+
     /**
      * 
      * @param {import('express').Request} req 
