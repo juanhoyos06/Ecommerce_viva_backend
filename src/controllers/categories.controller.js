@@ -53,11 +53,11 @@ class CategoriesController {
             let payload = req.body
             payload.name = payload.name.toUpperCase();
 
-            const category = new Categories(payload?.id, payload?.name, payload?.status)
+            const category = new Categories(id, payload?.name, payload?.status)
             category.valid();
-            const query = 'UPDATE desarrollo.tbcategorias SET nombre = $1, estado = $2' +
-                ' WHERE id_categoria = $3';
-            await pool.query(query, [payload?.name, payload?.status, id]);
+            const query = "UPDATE desarrollo.tbcategorias SET nombre = $1, estado = '1'" +
+                " WHERE id_categoria = $2";
+            await pool.query(query, [payload?.name,id]);
             res.status(200).json({
                 ok: true,
                 message: "Categoria actualizado",

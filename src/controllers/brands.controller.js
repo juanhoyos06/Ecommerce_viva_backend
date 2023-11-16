@@ -43,7 +43,6 @@ class BrandsController {
     async updateBrand(req, res) {
         try {
             const id = req.params.id;
-            console.log(id);
             const querySelect = "SELECT count(*) FROM desarrollo.tbmarcas WHERE id_marca = $1 AND estado = '1'"
             const response = await pool.query(querySelect, [id]);
             const count = response.rows[0].count;
@@ -51,7 +50,6 @@ class BrandsController {
                 throw { status: 404, message: "La marca no se encontró." };
             }
             let payload = req.body
-            console.log(payload.body);
             payload.name = payload.name.toUpperCase();
             const brand = new Brands(id, payload?.name, payload?.status)
             brand.valid();
