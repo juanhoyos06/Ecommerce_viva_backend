@@ -16,7 +16,6 @@ class UsersController {
 
     async createUser(req, res) {
         try {
-            //TODO: Guardar las imagenes de los usuarios
             let payload = req.body;
             payload.password = await generateHash(payload.password);
             payload.name = payload.name.toUpperCase();
@@ -172,21 +171,17 @@ class UsersController {
      * @param {import('express').Request} req 
      * @param {import('express').Response} res 
      */
-    async createImageProfile(req, res) {
+    async addCarrito(req, res) {
+
         try {
-            
-            const document = req.files.document;
-            if (document) {
-                document.mv(`./uploads/users/${document.md5}${document.name}`);
-                const host = config.get("api_host");
-                const url = `${host}static/${document.md5}${document.name}`;
-                res.status(200).json({
-                    ok: true,
-                    message: "Imagen del usuario guardado",
-                    info: url,
-                });
-            }
-            throw { status: 400 }
+            let payload = req.body;
+            const query = "INSERT INTO desarrollo.tbcarrito(id_usuario, id_producto, cantidad) VALUES($1, $2, $3)"
+            await pool.query(query, [payload?.id_user, payload?.id_product, payload?.cant])
+            res.status(200).json({
+                ok: true,
+                message: "Producto agregado",
+                info: payload
+            })
         } catch (error) {
             console.error(error);
             res.status(error?.status || 500).json({
@@ -195,6 +190,59 @@ class UsersController {
             });
         }
     }
+    /**
+     * 
+     * @param {import('express').Request} req 
+     * @param {import('express').Response} res 
+     */
+    async getNumberCar(req, res) {
+        try {
+            const id = req.params.id;
+            const query = "SELECT count(*) FROM desarrollo.tbcarrito WHERE id_usuario = $1";
+            const response = await pool.query(query, [id]);
+
+            res.status(200).json({
+                ok: true,
+                message: "Cantidad de productos en el carrito",
+                info: response.rows[0]
+            });
+        } catch (error) {
+            res.status(error?.status || 500).json({
+                ok: false,
+                message: error?.message || error,
+            });
+        }
+
+    }
+    /**
+     * 
+     * @param {import('express').Request} req 
+     * @param {import('express').Response} res 
+     */
+    async getProductsCar(req, res){
+        try {
+            const id = req.params.id;
+            console.log(id);
+            const query = "SELECT p.imagen, p.nombre, p.precio, c.cantidad FROM desarrollo.tbcarrito c "+
+            "JOIN desarrollo.tbproductos p ON c.id_producto = p.id_producto "+
+            "WHERE id_usuario = $1";
+            const response = await pool.query(query, [id]);
+
+            res.status(200).json({
+                ok: true,
+                message: "Productos en el carrito",
+                info: response.rows
+            });
+        } catch (error) {
+            res.status(error?.status || 500).json({
+                ok: false,
+                message: error?.message || error,
+            });
+        }
+
+    }
+
+
 
 
 }
